@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My App</title>
+  {% load static %}
+  <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}?v={{ STATIC_VERSION }}">
+
+</head>
+<body>
+<a href="{% url 'main' %}">Home Page</a>
+  {% block content %}
+  {% endblock %}
+</body>
+</html>

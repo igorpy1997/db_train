@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="book-info">
+    <h2>{{ book.name }}</h2>
+    <h2>Price: {{ book.price }} $</h2>
+    <h2>Pub date: {{ book.pubdate }}</h2>
+  </div>
+
+  <div class="book-list">
+    <h3>Authors:</h3>
+    <ul>
+      {% for author in authors %}
+          <li><a href = {% url 'author-info' author.id %}>{{ author.name }}</a></li>
+      {% endfor %}
+        <li>
+            <h3>Publisher</h3> : <a href = {% url 'publisher-info' publisher.id %}>
+                                            {{ publisher.name }}</a></li>
+    </ul>
+  </div>
+{% endblock %}
