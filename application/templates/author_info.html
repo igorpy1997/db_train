@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="book-info">
+    <h2>{{ author.name }}</h2>
+    <h2>AGE: {{ author.age }} </h2>
+  </div>
+
+  <div class="book-list">
+    <h3>Books:</h3>
+    <ul>
+      {% for book in author_books %}
+          <li><a href = {% url 'book-info' book.id %}>{{ book.name }}</a></li>
+      {% endfor %}
+    </ul>
+    <h3>Publishers:</h3>
+    <ul>
+      {% for publisher in publishers %}
+          <li><a href = {% url 'publisher-info' publisher.id %}>{{ publisher.name }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endblock %}

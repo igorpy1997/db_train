@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<table class="table">
+  <thead>
+    <tr>
+        <th>number of stores: {{ count }}</th>
+
+    </tr>
+  </thead>
+  <tbody>
+    {% for store in stores %}
+      <tr>
+        <td>
+          <a href = "{% url 'store-print' store.id %}">
+            {{ store.name }}
+          </a>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
