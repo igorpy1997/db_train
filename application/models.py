@@ -19,7 +19,7 @@ class Book(models.Model):
     pages = models.IntegerField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     rating = models.FloatField()
-    authors = models.ManyToManyField(Author)
+    authors = models.ManyToManyField(Author, unique=False)
     publisher = models.ForeignKey(Publisher, on_delete=models.CASCADE)
     pubdate = models.DateField()
 
@@ -29,4 +29,4 @@ class Book(models.Model):
 
 class Store(models.Model):
     name = models.CharField(max_length=300)
-    books = models.ManyToManyField(Book)
+    books = models.ManyToManyField(Book, unique=False)

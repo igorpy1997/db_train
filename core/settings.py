@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "debug_toolbar",  # noqa
     "django_extensions",
     "application",
+    "django_celery_results",
 ]
 
 MIDDLEWARE = [
@@ -110,7 +111,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Europe/Warsaw"
+
 
 USE_I18N = True
 
@@ -136,3 +138,28 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+
+# celery
+
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_BROKER_URL = "amqp://guest:guest@localhost:5672//"
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_TASK_SERIALIZER = "json"
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TIMEZONE = TIME_ZONE
+
+# settings.py
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "barryalex687@gmail.com"
+EMAIL_HOST_PASSWORD = "oiydefiivflkbqlq"
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+DEFAULT_FROM_EMAIL = "barryalex687@gmail.com"
+
+# EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+NOREPLY_EMAIL = "barryalex687@gmail.com"

@@ -29,4 +29,5 @@ urlpatterns = [
     path("publishers_list/", views.publishers_list, name="publishers-list"),
     path("main/", views.main_page, name="main"),
     path("admin/", admin.site.urls),
+    path("remind_me/", views.remind_me, name="remind-me"),
 ]

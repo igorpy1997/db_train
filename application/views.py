@@ -1,6 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from application.models import Store, Book, Publisher, Author
 from django.db.models import Count, Avg
+from application.forms import ReminderForm
+from application.tasks import reminder
+from django.utils import timezone
 
 
 def main_page(request):
@@ -85,3 +88,20 @@ def publisher_info(request, publisher_id):
             "publisher_stores": publisher_stores,
         },
     )
+
+
+def remind_me(request):
+    if request.method == "POST":
+        form = ReminderForm(request.POST)
+        if form.is_valid():
+            message = form.cleaned_data.get("message")
+            reminder_datetime = form.cleaned_data.get("reminder_datetime")
+            email = form.cleaned_data.get("email")
+            now = timezone.now()
+            if reminder_datetime > now:
+                reminder.apply_async(args=[message, email], eta=reminder_datetime)
+            return redirect("main")
+    else:
+        form = ReminderForm()
+    now = timezone.now()
+    return render(request, "create_reminder.html", {"form": form, "now": now})
