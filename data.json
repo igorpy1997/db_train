@@ -499,7 +499,7 @@
 },
 {
     "model": "application.book_authors",
-    "pk": 39,
+    "pk": 1,
     "fields": {
         "book": 1,
         "author": 16
@@ -507,7 +507,7 @@
 },
 {
     "model": "application.book_authors",
-    "pk": 40,
+    "pk": 2,
     "fields": {
         "book": 2,
         "author": 16
@@ -515,7 +515,7 @@
 },
 {
     "model": "application.book_authors",
-    "pk": 41,
+    "pk": 3,
     "fields": {
         "book": 3,
         "author": 17
@@ -523,7 +523,7 @@
 },
 {
     "model": "application.book_authors",
-    "pk": 42,
+    "pk": 4,
     "fields": {
         "book": 4,
         "author": 18
@@ -531,7 +531,7 @@
 },
 {
     "model": "application.book_authors",
-    "pk": 43,
+    "pk": 5,
     "fields": {
         "book": 5,
         "author": 19
@@ -539,7 +539,7 @@
 },
 {
     "model": "application.book_authors",
-    "pk": 44,
+    "pk": 6,
     "fields": {
         "book": 6,
         "author": 20
@@ -547,7 +547,7 @@
 },
 {
     "model": "application.book_authors",
-    "pk": 45,
+    "pk": 7,
     "fields": {
         "book": 7,
         "author": 21
@@ -555,7 +555,7 @@
 },
 {
     "model": "application.book_authors",
-    "pk": 46,
+    "pk": 8,
     "fields": {
         "book": 8,
         "author": 22
@@ -563,7 +563,7 @@
 },
 {
     "model": "application.book_authors",
-    "pk": 47,
+    "pk": 9,
     "fields": {
         "book": 20,
         "author": 26
@@ -571,7 +571,7 @@
 },
 {
     "model": "application.book_authors",
-    "pk": 48,
+    "pk": 10,
     "fields": {
         "book": 21,
         "author": 30
@@ -579,7 +579,7 @@
 },
 {
     "model": "application.book_authors",
-    "pk": 49,
+    "pk": 11,
     "fields": {
         "book": 22,
         "author": 19
@@ -587,7 +587,7 @@
 },
 {
     "model": "application.book_authors",
-    "pk": 50,
+    "pk": 12,
     "fields": {
         "book": 23,
         "author": 31
@@ -595,7 +595,7 @@
 },
 {
     "model": "application.book_authors",
-    "pk": 51,
+    "pk": 13,
     "fields": {
         "book": 24,
         "author": 32
@@ -603,7 +603,7 @@
 },
 {
     "model": "application.book_authors",
-    "pk": 52,
+    "pk": 14,
     "fields": {
         "book": 55,
         "author": 27
@@ -611,7 +611,7 @@
 },
 {
     "model": "application.book_authors",
-    "pk": 53,
+    "pk": 15,
     "fields": {
         "book": 55,
         "author": 38
@@ -619,7 +619,7 @@
 },
 {
     "model": "application.book_authors",
-    "pk": 54,
+    "pk": 16,
     "fields": {
         "book": 56,
         "author": 36
@@ -627,7 +627,7 @@
 },
 {
     "model": "application.book_authors",
-    "pk": 55,
+    "pk": 17,
     "fields": {
         "book": 56,
         "author": 37

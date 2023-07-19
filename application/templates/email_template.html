@@ -1,0 +1,61 @@
+<!-- email_template.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Beautiful Email</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        h1 {
+            color: #333333;
+            text-align: center;
+        }
+        p {
+            color: #666666;
+            line-height: 1.6;
+        }
+        .image-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        .button {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: #ffffff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    {% load static %}
+    <div class="container">
+        <h1>Welcome to our Newsletter!</h1>
+        <div class="image-container">
+            <img src= "https://i.ytimg.com/vi/tVlcKp3bWH8/maxresdefault.jpg" alt="Beautiful Image">
+        </div>
+        <p>Dear Subscriber,</p>
+        <p>{{ message }}</p>
+        <p>
+        </p>
+        <p>Best regards,</p>
+        <p>Igor/p>
+    </div>
+</body>
+</html>
