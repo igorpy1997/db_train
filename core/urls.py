@@ -54,4 +54,4 @@ urlpatterns = [
     path("accounts/register/", register_user, name="register"),
     path("logout/", LogoutView.as_view(next_page="main"), name="logout"),
 ]
-#hey
+# hey
