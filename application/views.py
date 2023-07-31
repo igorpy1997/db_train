@@ -1,15 +1,15 @@
 from django.shortcuts import render, redirect
 from application.models import Store, Book, Publisher, Author
-from django.db.models import Count, Avg
+from django.db.models import Count
 from application.forms import ReminderForm
 from application.tasks import reminder
 from django.utils import timezone
 from django.views.generic import ListView, DetailView, TemplateView
-from django.core.paginator import Paginator
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import CreateView, UpdateView, DeleteView
 from django.contrib.auth.forms import UserCreationForm
+from .mixins import PaginatedCacheMixin
 
 
 def register_user(request):
@@ -64,24 +64,11 @@ class StorePrintView(DetailView):
         return context
 
 
-class BooksPrintView(ListView):
+class BooksPrintView(PaginatedCacheMixin, ListView):
     model = Book
     template_name = "books_list.html"
     context_object_name = "books"
-    paginate_by = 10
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        avg_price = Book.objects.aggregate(avg_price=Avg("price"))["avg_price"]
-        context["avg_price"] = avg_price
-
-        paginator = Paginator(self.object_list, self.paginate_by)
-        page_number = self.request.GET.get("page")
-        page_obj = paginator.get_page(page_number)
-
-        context["page_obj"] = page_obj
-        context["is_paginated"] = page_obj.has_other_pages()
-        return context
+    paginate_by = 100
 
 
 class BookInfoView(DetailView):
