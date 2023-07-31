@@ -4,90 +4,167 @@ from django.db.models import Count, Avg
 from application.forms import ReminderForm
 from application.tasks import reminder
 from django.utils import timezone
+from django.views.generic import ListView, DetailView, TemplateView
+from django.core.paginator import Paginator
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import CreateView, UpdateView, DeleteView
+from django.contrib.auth.forms import UserCreationForm
 
 
-def main_page(request):
-    return render(request, "main_page.html")
+def register_user(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("main")
+    else:
+        form = UserCreationForm()
+    return render(request, "register.html", {"form": form})
 
 
-def stores_list(request):
-    stores = Store.objects.all()
-    count = stores.aggregate(count=Count("id"))["count"]
-    return render(request, "stores_list.html", {"stores": stores, "count": count})
+class MainPageView(TemplateView):
+    template_name = "main_page.html"
 
 
-def store_print(request, store_id):
-    store = Store.objects.get(id=store_id)
-    books_count = (
-        Store.objects.filter(id=store_id).annotate(num_books=Count("books")).values("num_books").first()["num_books"]
-    )
-    books = store.books.prefetch_related("authors")
-    store_authors = Author.objects.filter(book__in=books).distinct()
-    return render(
-        request,
-        "store_print.html",
-        {"store": store, "books": books, "store_authors": store_authors, "books_count": books_count},
-    )
+class StoresListView(ListView):
+    model = Store
+    template_name = "stores_list.html"
+    context_object_name = "stores"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        stores = self.object_list
+        count = stores.aggregate(count=Count("id"))["count"]
+        context["count"] = count
+        return context
 
 
-def books_print(request):
-    books = Book.objects.all()
-    avg_price = books.aggregate(avg_price=Avg("price"))["avg_price"]
-    return render(request, "books_list.html", {"books": books, "avg_price": avg_price})
+class AuthorsListView(ListView):
+    model = Author
+    template_name = "authors_list.html"
+    context_object_name = "authors"
 
 
-def book_info(request, book_id):
-    book = Book.objects.select_related("publisher").get(id=book_id)
-    authors = book.authors.prefetch_related()
-    publisher = book.publisher
-    return render(request, "book_info.html", {"book": book, "authors": authors, "publisher": publisher})
+class StorePrintView(DetailView):
+    model = Store
+    template_name = "store_print.html"
+    context_object_name = "store"
+    pk_url_kwarg = "store_id"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        store = self.object
+        books_count = store.books.count()
+        books = store.books.prefetch_related("authors")
+        store_authors = Author.objects.filter(book__in=books).distinct()
+        context["books"] = books
+        context["store_authors"] = store_authors
+        context["books_count"] = books_count
+        return context
 
 
-def authors_list(request):
-    authors = Author.objects.all()
-    return render(request, "authors_list.html", {"authors": authors})
+class BooksPrintView(ListView):
+    model = Book
+    template_name = "books_list.html"
+    context_object_name = "books"
+    paginate_by = 10
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        avg_price = Book.objects.aggregate(avg_price=Avg("price"))["avg_price"]
+        context["avg_price"] = avg_price
+
+        paginator = Paginator(self.object_list, self.paginate_by)
+        page_number = self.request.GET.get("page")
+        page_obj = paginator.get_page(page_number)
+
+        context["page_obj"] = page_obj
+        context["is_paginated"] = page_obj.has_other_pages()
+        return context
 
 
-def author_info(request, author_id):
-    author = Author.objects.get(id=author_id)
-    author_books = author.book_set.all().prefetch_related("authors", "publisher__book_set__authors")
-    publishers = set(book.publisher for book in author_books)
-    return render(
-        request,
-        "author_info.html",
-        {
-            "author_books": author_books,
-            "author": author,
-            "publishers": publishers,
-        },
-    )
+class BookInfoView(DetailView):
+    model = Book
+    template_name = "book_info.html"
+    context_object_name = "book"
+    pk_url_kwarg = "book_id"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        book = self.object
+        authors = book.authors.prefetch_related()
+        publisher = book.publisher
+        context["authors"] = authors
+        context["publisher"] = publisher
+        return context
 
 
-def publishers_list(request):
-    publishers = Publisher.objects.all()
-    sum_books = publishers.aggregate(sum_books=Count("book"))["sum_books"]
-    return render(request, "publishers_list.html", {"publishers": publishers, "sum_books": sum_books})
+class AuthorInfoView(DetailView):
+    model = Author
+    template_name = "author_info.html"
+    context_object_name = "author"
+    pk_url_kwarg = "author_id"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        author = self.object
+        author_books = author.book_set.all().prefetch_related("authors", "publisher__book_set__authors")
+        publishers = {book.publisher for book in author_books}
+        context["author_books"] = author_books
+        context["publishers"] = publishers
+        return context
 
 
-def publisher_info(request, publisher_id):
-    publisher = Publisher.objects.get(id=publisher_id)
-    publisher_books = publisher.book_set.prefetch_related("authors", "publisher__book_set__store_set")
-    publisher_authors = set()
-    for book in publisher_books:
-        publisher_authors.update(book.authors.all())
-    publisher_stores = set()
-    for book in publisher_books:
-        publisher_stores.update(book.store_set.all())
-    return render(
-        request,
-        "publisher_info.html",
-        {
-            "publisher": publisher,
-            "publisher_books": publisher_books,
-            "publisher_authors": publisher_authors,
-            "publisher_stores": publisher_stores,
-        },
-    )
+class PublishersListView(ListView):
+    model = Publisher
+    template_name = "publishers_list.html"
+    context_object_name = "publishers"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        publishers = self.object_list
+        sum_books = publishers.aggregate(sum_books=Count("book"))["sum_books"]
+        context["sum_books"] = sum_books
+        return context
+
+
+class PublisherInfoView(DetailView):
+    model = Publisher
+    template_name = "publisher_info.html"
+    context_object_name = "publisher"
+    pk_url_kwarg = "publisher_id"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        publisher = self.object
+        publisher_books = publisher.book_set.prefetch_related("authors", "publisher__book_set__store_set")
+        publisher_authors = {author for book in publisher_books for author in book.authors.all()}
+        publisher_stores = {store for book in publisher_books for store in book.store_set.all()}
+        context["publisher_books"] = publisher_books
+        context["publisher_authors"] = publisher_authors
+        context["publisher_stores"] = publisher_stores
+        return context
+
+
+class BookCreateView(LoginRequiredMixin, CreateView):
+    model = Book
+    template_name = "book_create.html"
+    fields = "__all__"
+    success_url = reverse_lazy("books-print")
+
+
+class BookUpdateView(LoginRequiredMixin, UpdateView):
+    model = Book
+    template_name = "book_update.html"
+    fields = "__all__"
+    success_url = reverse_lazy("books-print")
+
+
+class BookDeleteView(LoginRequiredMixin, DeleteView):
+    model = Book
+    template_name = "book_delete.html"
+    success_url = reverse_lazy("books-print")
 
 
 def remind_me(request):

@@ -6,6 +6,14 @@
         <li><a href = "{% url 'books-print' %}">Books</a></li>
         <li><a href = "{% url 'authors-list' %}">Authors</a></li>
         <li><a href = "{% url 'publishers-list' %}">Publishers</a></li>
+        <li><a href="{% url 'book-create' %}">Create Book</a></li>
+        <li><a href="{% url 'register' %}">Register</a></li>
+
+        {% if user.is_authenticated %}
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+        {% else %}
+        <li><a href="{% url 'login' %}">Login</a></li>
+        {% endif %}
     </ul>
 
     <a href = "{% url 'remind-me' %}">Create reminder</a>
